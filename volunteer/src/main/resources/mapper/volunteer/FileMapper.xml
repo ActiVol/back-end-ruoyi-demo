@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.volunteer.mapper.FileMapper">
+    
+    <resultMap type="File" id="FileResult">
+        <result property="fileId"    column="file_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="path"    column="path"    />
+        <result property="url"    column="url"    />
+        <result property="type"    column="type"    />
+        <result property="size"    column="size"    />
+        <result property="deleted"    column="deleted"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="activityName"    column="activity_name"    />
+    </resultMap>
+
+    <sql id="selectFileVo">
+        SELECT
+            a.file_id,
+            a.file_name,
+            a.path,
+            a.url,
+            a.type,
+            a.size,
+            a.deleted,
+            a.create_by,
+            a.create_time,
+            a.update_by,
+            a.update_time,
+            b.activity_name
+        FROM
+            file a
+        LEFT JOIN activity_post_info b on a.file_id=b.file_id
+    </sql>
+
+    <select id="selectFileList" parameterType="File" resultMap="FileResult">
+        <include refid="selectFileVo"/>
+        <where>
+            <if test="fileName != null  and fileName != ''"> and a.file_name like concat('%', #{fileName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectFileById" parameterType="Long" resultMap="FileResult">
+        <include refid="selectFileVo"/>
+        where a.file_id = #{fileId}
+    </select>
+
+    <insert id="insertFile" parameterType="File" useGeneratedKeys="true" keyProperty="fileId">
+        insert into file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileName != null">file_name,</if>
+            <if test="path != null and path != ''">path,</if>
+            <if test="url != null and url != ''">url,</if>
+            <if test="type != null">type,</if>
+            <if test="size != null">size,</if>
+            <if test="deleted != null">deleted,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileName != null">#{fileName},</if>
+            <if test="path != null and path != ''">#{path},</if>
+            <if test="url != null and url != ''">#{url},</if>
+            <if test="type != null">#{type},</if>
+            <if test="size != null">#{size},</if>
+            <if test="deleted != null">#{deleted},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFile" parameterType="File">
+        update file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileName != null">file_name = #{fileName},</if>
+            <if test="path != null and path != ''">path = #{path},</if>
+            <if test="url != null and url != ''">url = #{url},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="size != null">size = #{size},</if>
+            <if test="deleted != null">deleted = #{deleted},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where file_id = #{fileId}
+    </update>
+
+    <delete id="deleteFileById" parameterType="Long">
+        delete from file where file_id = #{fileId}
+    </delete>
+
+    <delete id="deleteFileByIds" parameterType="String">
+        delete from file where file_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{fileId}
+        </foreach>
+    </delete>
+</mapper>

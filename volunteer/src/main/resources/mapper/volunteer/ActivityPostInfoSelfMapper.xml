@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.volunteer.mapper.ActivityPostInfoSelfMapper">
+
+    <resultMap type="ActivityPostInfoSelf" id="ActivityPostInfoSelfResult">
+        <result property="activityId"    column="activity_id"    />
+        <result property="activityName"    column="activity_name"    />
+        <result property="duration"    column="duration"    />
+        <result property="recruitNumber"    column="recruit_number"    />
+        <result property="address"    column="address"    />
+        <result property="serviceField"    column="service_field"    />
+        <result property="serviceObject"    column="service_object"    />
+        <result property="serviceLocation"    column="service_location"    />
+        <result property="organizerName"    column="organizer_name"    />
+        <result property="organizerEmail"    column="organizer_email"    />
+        <result property="details"    column="details"    />
+        <result property="activityPictures"    column="activity_pictures"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="fileId"    column="file_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createName"    column="create_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="approveStatus"    column="approve_status"    />
+    </resultMap>
+
+    <sql id="selectActivityPostInfoSelfVo">
+        select activity_id, activity_name, duration, recruit_number, address, service_field, service_object, service_location, organizer_name, organizer_email, details, activity_pictures, start_time, end_time, file_id, dept_id, create_by, create_name, create_time, update_by, update_time, approve_status from activity_post_info_self
+    </sql>
+
+    <select id="selectActivityPostInfoSelfList" parameterType="ActivityPostInfoSelf" resultMap="ActivityPostInfoSelfResult">
+        <include refid="selectActivityPostInfoSelfVo"/>
+        <where>
+            <if test="activityName != null  and activityName != ''"> and activity_name like concat('%', #{activityName}, '%')</if>
+            <if test="duration != null "> and duration = #{duration}</if>
+            <if test="recruitNumber != null "> and recruit_number = #{recruitNumber}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="serviceField != null  and serviceField != ''"> and service_field = #{serviceField}</if>
+            <if test="serviceObject != null  and serviceObject != ''"> and service_object = #{serviceObject}</if>
+            <if test="serviceLocation != null  and serviceLocation != ''"> and service_location = #{serviceLocation}</if>
+            <if test="organizerName != null  and organizerName != ''"> and organizer_name like concat('%', #{organizerName}, '%')</if>
+            <if test="organizerEmail != null  and organizerEmail != ''"> and organizer_email = #{organizerEmail}</if>
+            <if test="details != null  and details != ''"> and details = #{details}</if>
+            <if test="activityPictures != null  and activityPictures != ''"> and activity_pictures = #{activityPictures}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="fileId != null "> and file_id = #{fileId}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="createName != null  and createName != ''"> and create_name like concat('%', #{createName}, '%')</if>
+            <if test="approveStatus != null "> and approve_status = #{approveStatus}</if>
+        </where>
+    </select>
+
+    <select id="selectActivityPostInfoSelfByActivityId" parameterType="Long" resultMap="ActivityPostInfoSelfResult">
+        <include refid="selectActivityPostInfoSelfVo"/>
+        where activity_id = #{activityId}
+    </select>
+
+    <insert id="insertActivityPostInfoSelf" parameterType="ActivityPostInfoSelf">
+        insert into activity_post_info_self
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="activityId != null">activity_id,</if>
+            <if test="activityName != null and activityName != ''">activity_name,</if>
+            <if test="duration != null">duration,</if>
+            <if test="recruitNumber != null">recruit_number,</if>
+            <if test="address != null">address,</if>
+            <if test="serviceField != null">service_field,</if>
+            <if test="serviceObject != null">service_object,</if>
+            <if test="serviceLocation != null">service_location,</if>
+            <if test="organizerName != null">organizer_name,</if>
+            <if test="organizerEmail != null">organizer_email,</if>
+            <if test="details != null">details,</if>
+            <if test="activityPictures != null">activity_pictures,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="fileId != null">file_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createName != null">create_name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="approveStatus != null">approve_status,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="activityId != null">#{activityId},</if>
+            <if test="activityName != null and activityName != ''">#{activityName},</if>
+            <if test="duration != null">#{duration},</if>
+            <if test="recruitNumber != null">#{recruitNumber},</if>
+            <if test="address != null">#{address},</if>
+            <if test="serviceField != null">#{serviceField},</if>
+            <if test="serviceObject != null">#{serviceObject},</if>
+            <if test="serviceLocation != null">#{serviceLocation},</if>
+            <if test="organizerName != null">#{organizerName},</if>
+            <if test="organizerEmail != null">#{organizerEmail},</if>
+            <if test="details != null">#{details},</if>
+            <if test="activityPictures != null">#{activityPictures},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="fileId != null">#{fileId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createName != null">#{createName},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="approveStatus != null">#{approveStatus},</if>
+        </trim>
+    </insert>
+
+    <update id="updateActivityPostInfoSelf" parameterType="ActivityPostInfoSelf">
+        update activity_post_info_self
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="activityName != null and activityName != ''">activity_name = #{activityName},</if>
+            <if test="duration != null">duration = #{duration},</if>
+            <if test="recruitNumber != null">recruit_number = #{recruitNumber},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="serviceField != null">service_field = #{serviceField},</if>
+            <if test="serviceObject != null">service_object = #{serviceObject},</if>
+            <if test="serviceLocation != null">service_location = #{serviceLocation},</if>
+            <if test="organizerName != null">organizer_name = #{organizerName},</if>
+            <if test="organizerEmail != null">organizer_email = #{organizerEmail},</if>
+            <if test="details != null">details = #{details},</if>
+            <if test="activityPictures != null">activity_pictures = #{activityPictures},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="fileId != null">file_id = #{fileId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createName != null">create_name = #{createName},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="approveStatus != null">approve_status = #{approveStatus},</if>
+        </trim>
+        where activity_id = #{activityId}
+    </update>
+
+    <delete id="deleteActivityPostInfoSelfByActivityId" parameterType="Long">
+        delete from activity_post_info_self where activity_id = #{activityId}
+    </delete>
+
+    <delete id="deleteActivityPostInfoSelfByActivityIds" parameterType="String">
+        delete from activity_post_info_self where activity_id in
+        <foreach item="activityId" collection="array" open="(" separator="," close=")">
+            #{activityId}
+        </foreach>
+    </delete>
+</mapper>

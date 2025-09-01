@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.volunteer.mapper.UserRoleApprovalMapper">
+    
+    <resultMap type="UserRoleApproval" id="UserRoleApprovalResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="roleId"    column="role_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="ruleName"    column="rule_name"    />
+        <result property="approvalStatus"    column="approval_status"    />
+        <result property="approvalTime"    column="approval_time"    />
+        <result property="approvedBy"    column="approved_by"    />
+        <result property="approvedUserId"    column="approved_user_id"    />
+        <result property="reason"    column="reason"    />
+    </resultMap>
+
+    <sql id="selectUserRoleApprovalVo">
+        select id, user_id, role_id, user_name, rule_name, approval_status, approval_time, approved_by, approved_user_id, reason from user_role_approval
+    </sql>
+
+    <select id="selectUserRoleApprovalList" parameterType="UserRoleApproval" resultMap="UserRoleApprovalResult">
+        <include refid="selectUserRoleApprovalVo"/>
+        <where>  
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="approvalStatus != null "> and approval_status = #{approvalStatus}</if>
+            <if test="approvalTime != null "> and approval_time = #{approvalTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectUserRoleApprovalById" parameterType="Long" resultMap="UserRoleApprovalResult">
+        <include refid="selectUserRoleApprovalVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertUserRoleApproval" parameterType="UserRoleApproval">
+        insert into user_role_approval
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="roleId != null">role_id,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="ruleName != null">rule_name,</if>
+            <if test="approvalStatus != null">approval_status,</if>
+            <if test="approvalTime != null">approval_time,</if>
+            <if test="approvedBy != null">approved_by,</if>
+            <if test="approvedUserId != null">approved_user_id,</if>
+            <if test="reason != null">reason,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="roleId != null">#{roleId},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="ruleName != null">#{ruleName},</if>
+            <if test="approvalStatus != null">#{approvalStatus},</if>
+            <if test="approvalTime != null">#{approvalTime},</if>
+            <if test="approvedBy != null">#{approvedBy},</if>
+            <if test="approvedUserId != null">#{approvedUserId},</if>
+            <if test="reason != null">#{reason},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserRoleApproval" parameterType="UserRoleApproval">
+        update user_role_approval
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="roleId != null">role_id = #{roleId},</if>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="ruleName != null">rule_name = #{ruleName},</if>
+            <if test="approvalStatus != null">approval_status = #{approvalStatus},</if>
+            <if test="approvalTime != null">approval_time = #{approvalTime},</if>
+            <if test="approvedBy != null">approved_by = #{approvedBy},</if>
+            <if test="approvedUserId != null">approved_user_id = #{approvedUserId},</if>
+            <if test="reason != null">reason = #{reason},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserRoleApprovalById" parameterType="Long">
+        delete from user_role_approval where id = #{id}
+    </delete>
+
+    <delete id="deleteUserRoleApprovalByIds" parameterType="String">
+        delete from user_role_approval where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

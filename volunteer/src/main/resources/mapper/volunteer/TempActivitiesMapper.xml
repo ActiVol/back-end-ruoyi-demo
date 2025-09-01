@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.volunteer.mapper.TempActivitiesMapper">
+
+    <resultMap type="TempActivities" id="TempActivitiesResult">
+            <result property="id" column="id"/>
+            <result property="userName" column="user_name"/>
+            <result property="externalEmail" column="external_email"/>
+            <result property="internalEmail" column="internal_email"/>
+            <result property="graduationYear" column="graduation_year"/>
+            <result property="activityName" column="activity_name"/>
+            <result property="activityAddress" column="activity_address"/>
+            <result property="activityDetails" column="activity_details"/>
+            <result property="activityStartTime" column="activity_start_time"/>
+            <result property="activityEndTime" column="activity_end_time"/>
+            <result property="activityDuration" column="activity_duration"/>
+            <result property="organizerName" column="organizer_name"/>
+            <result property="organizerEmail" column="organizer_email"/>
+            <result property="commentToAdmin" column="comment_to_admin"/>
+            <result property="recruitNumber" column="recruit_number"/>
+            <result property="reviewStatus" column="review_status"/>
+<!--            <association property="file" javaType="File" resultMap="fileResult"/>-->
+    </resultMap>
+<!--    <resultMap id="fileResult" type="File">-->
+<!--        <id property="fileId"    column="file_id"    />-->
+<!--        <result property="name"    column="name"    />-->
+<!--        <result property="path"    column="path"    />-->
+<!--        <result property="url"    column="url"    />-->
+<!--        <result property="type"    column="type"    />-->
+<!--    </resultMap>-->
+    <sql id="selectTempActivitiesVo">
+        select a.id,
+               a.user_name,
+               a.external_email,
+               a.internal_email,
+               a.recruit_number,
+               a.graduation_year,
+               a.activity_name,
+               a.activity_address,
+               a.activity_details,
+               a.activity_start_time,
+               a.activity_end_time,
+               a.activity_duration,
+               a.organizer_name,
+               a.organizer_email,
+               a.comment_to_admin,
+               a.review_status
+        from activity_user_self_record a
+    </sql>
+
+    <select id="selectTempActivitiesList" parameterType="TempActivities" resultMap="TempActivitiesResult">
+        <include refid="selectTempActivitiesVo"/>
+        <where>
+            <if test="userName != null  and userName != ''">
+                and a.user_name like concat('%', #{userName}, '%')
+            </if>
+            <if test="internalEmail != null  and internalEmail != ''">
+                and (a.internal_email = #{internalEmail} or  a.external_email = #{internalEmail})
+            </if>
+            <if test="activityName != null  and activityName != ''">
+                and a.activity_name like concat('%', #{activityName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectTempActivitiesById" parameterType="Long" resultMap="TempActivitiesResult">
+            <include refid="selectTempActivitiesVo"/>
+            where a.id = #{id}
+    </select>
+
+    <insert id="insertTempActivities" parameterType="TempActivities" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into activity_user_self_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    <if test="userName != null">user_name,
+                    </if>
+                    <if test="externalEmail != null">external_email,
+                    </if>
+                    <if test="internalEmail != null">internal_email,
+                    </if>
+                    <if test="recruitNumber != null">recruit_number,
+                    </if>
+                    <if test="graduationYear != null">graduation_year,
+                    </if>
+                    <if test="activityName != null">activity_name,
+                    </if>
+                    <if test="activityAddress != null">activity_address,
+                    </if>
+                    <if test="activityDetails != null">activity_details,
+                    </if>
+                    <if test="activityStartTime != null">activity_start_time,
+                    </if>
+                    <if test="activityEndTime != null">activity_end_time,
+                    </if>
+                    <if test="activityDuration != null">activity_duration,
+                    </if>
+                    <if test="organizerName != null">organizer_name,
+                    </if>
+                    <if test="organizerEmail != null">organizer_email,
+                    </if>
+                    <if test="commentToAdmin != null">comment_to_admin,
+                    </if>
+                    <if test="reviewStatus != null">review_status,
+                    </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                    <if test="userName != null">#{userName},
+                    </if>
+                    <if test="externalEmail != null">#{externalEmail},
+                    </if>
+                    <if test="internalEmail != null">#{internalEmail},
+                    </if>
+                    <if test="recruitNumber != null">#{recruitNumber},
+                    </if>
+                    <if test="graduationYear != null">#{graduationYear},
+                    </if>
+                    <if test="activityName != null">#{activityName},
+                    </if>
+                    <if test="activityAddress != null">#{activityAddress},
+                    </if>
+                    <if test="activityDetails != null">#{activityDetails},
+                    </if>
+                    <if test="activityStartTime != null">#{activityStartTime},
+                    </if>
+                    <if test="activityEndTime != null">#{activityEndTime},
+                    </if>
+                    <if test="activityDuration != null">#{activityDuration},
+                    </if>
+                    <if test="organizerName != null">#{organizerName},
+                    </if>
+                    <if test="organizerEmail != null">#{organizerEmail},
+                    </if>
+                    <if test="commentToAdmin != null">#{commentToAdmin},
+                    </if>
+                    <if test="reviewStatus != null">#{reviewStatus},
+                    </if>
+        </trim>
+    </insert>
+
+    <update id="updateTempActivities" parameterType="TempActivities">
+        update activity_user_self_record
+        <trim prefix="SET" suffixOverrides=",">
+                    <if test="userName != null">user_name =
+                        #{userName},
+                    </if>
+                    <if test="externalEmail != null">external_email =
+                        #{externalEmail},
+                    </if>
+                    <if test="internalEmail != null">internal_email =
+                        #{internalEmail},
+                    </if>
+                    <if test="recruitNumber != null">recruit_number =
+                        #{recruitNumber},
+                    </if>
+                    <if test="graduationYear != null">graduation_year =
+                        #{graduationYear},
+                    </if>
+                    <if test="activityName != null">activity_name =
+                        #{activityName},
+                    </if>
+                    <if test="activityAddress != null">activity_address =
+                        #{activityAddress},
+                    </if>
+                    <if test="activityDetails != null">activity_details =
+                        #{activityDetails},
+                    </if>
+                    <if test="activityStartTime != null">activity_start_time =
+                        #{activityStartTime},
+                    </if>
+                    <if test="activityEndTime != null">activity_end_time =
+                        #{activityEndTime},
+                    </if>
+                    <if test="activityDuration != null">activity_duration =
+                        #{activityDuration},
+                    </if>
+                    <if test="organizerName != null">organizer_name =
+                        #{organizerName},
+                    </if>
+                    <if test="organizerEmail != null">organizer_email =
+                        #{organizerEmail},
+                    </if>
+                    <if test="commentToAdmin != null">comment_to_admin =
+                        #{commentToAdmin},
+                    </if>
+                    <if test="reviewStatus != null">review_status =
+                        #{reviewStatus},
+                    </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTempActivitiesById" parameterType="Long">
+        delete
+        from activity_user_self_record where id = #{id}
+    </delete>
+
+    <delete id="deleteTempActivitiesByIds" parameterType="String">
+        delete from activity_user_self_record where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

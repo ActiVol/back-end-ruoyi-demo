@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.volunteer.mapper.ActivityInfoMapper">
+
+    <resultMap type="ActivityInfo" id="ActivityInfoResult">
+        <result property="activityId" column="activity_id"/>
+        <result property="activityName" column="activity_name"/>
+        <result property="address" column="address"/>
+        <result property="recruitNumber" column="recruit_number"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="details" column="details"/>
+        <result property="activityPictures" column="activity_pictures"/>
+        <result property="serviceField" column="service_field"/>
+        <result property="serviceObject" column="service_object"/>
+        <result property="serviceLocation" column="service_location"/>
+        <result property="activityStatus" column="activity_status"/>
+        <result property="publishStatus" column="publish_status"/>
+        <result property="publishTime" column="publish_time"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="signupDate" column="signup_date"/>
+        <result property="leader" column="leader"/>
+        <result property="duration" column="duration"/>
+        <result property="fileId" column="file_id"/>
+        <association property="file" javaType="File" resultMap="fileResult"/>
+    </resultMap>
+    <resultMap type="ActivityInfo" id="ActivityInfoResultMap">
+        <result property="activityId" column="activity_id"/>
+        <result property="activityName" column="activity_name"/>
+        <result property="address" column="address"/>
+        <result property="recruitNumber" column="recruit_number"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="details" column="details"/>
+        <result property="activityPictures" column="activity_pictures"/>
+        <result property="serviceField" column="service_field"/>
+        <result property="serviceObject" column="service_object"/>
+        <result property="serviceLocation" column="service_location"/>
+        <result property="activityStatus" column="activity_status"/>
+        <result property="publishStatus" column="publish_status"/>
+        <result property="publishTime" column="publish_time"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="duration" column="duration"/>
+        <result property="fileId" column="file_id"/>
+        <!-- 新增的字段，表示已招募人数 -->
+        <result property="recruitedNumber" column="recruited_number"/>
+        <association property="dept" javaType="SysDept" resultMap="deptResult"/>
+        <association property="file" javaType="File" resultMap="fileResult"/>
+    </resultMap>
+    <resultMap id="deptResult" type="SysDept">
+        <id property="deptId" column="dept_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="ancestors" column="ancestors"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="email" column="email"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="leader" column="leader"/>
+        <result property="status" column="dept_status"/>
+    </resultMap>
+    <resultMap id="fileResult" type="File">
+        <id property="fileId"    column="file_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="path"    column="path"    />
+        <result property="url"    column="url"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+    <!-- 查询已招募人数的 SQL -->
+    <sql id="recruitedNumberSql">
+            (SELECT COUNT(*) FROM activity_user_record WHERE activity_id = #{activityId})
+            AS recruited_number
+    </sql>
+    <select id="selectActivityInfoByActivityId" parameterType="Long" resultMap="ActivityInfoResultMap">
+        SELECT
+        a.activity_id AS activity_id,
+        a.activity_name AS activity_name,
+        a.address AS address,
+        a.recruit_number AS recruit_number,
+        a.dept_id AS dept_id,
+        a.details AS details,
+        a.activity_pictures ,
+        a.service_field AS service_field,
+        a.service_object AS service_object,
+        a.service_location AS service_location,
+        a.activity_status AS activity_status,
+        a.publish_status AS publish_status,
+        a.publish_time AS publish_time,
+        a.start_time AS start_time,
+        a.end_time AS end_time,
+        a.duration AS duration,
+        a.file_id,
+        d.dept_id,
+        d.parent_id,
+        d.ancestors,
+        d.dept_name,
+        d.order_num,
+        d.leader,
+        d.email,
+        d.status as dept_status,
+        f.file_id,
+        f.file_name,
+        f.path,
+        f.url,
+        f.type,
+        -- 通过调用子查询获取已招募人数
+        <include refid="recruitedNumberSql"/>
+        FROM
+        activity_post_info a
+        left join sys_dept d on a.dept_id = d.dept_id
+        left join file f on a.file_id=f.file_id
+        WHERE
+        a.activity_id = #{activityId}
+    </select>
+    <sql id="selectActivityInfoVo">
+        select a.activity_id,
+               a.activity_name,
+               a.address,
+               a.recruit_number,
+               a.dept_id,
+               a.details,
+               a.activity_pictures,
+               a.service_field,
+               a.service_object,
+               a.service_location,
+               a.activity_status,
+               a.publish_status,
+               a.publish_time,
+               a.start_time,
+               a.end_time,
+               a.duration,
+               a.file_id,
+               f.file_id,
+               f.file_name,
+               f.path,
+               f.url,
+               f.type
+        from activity_post_info a
+        left join file f on a.file_id=f.file_id
+    </sql>
+
+    <select id="selectActivityInfoList" parameterType="ActivityInfo" resultMap="ActivityInfoResult">
+        <include refid="selectActivityInfoVo"/>
+        <where>
+            <if test="activityName != null  and activityName != ''">and a.activity_name like concat('%', #{activityName},
+                '%')
+            </if>
+            <if test="address != null  and address != ''">and a.address like concat('%',#{address}, '%')</if>
+            <if test="serviceField != null  and serviceField != ''">and a.service_field = #{serviceField}</if>
+            <if test="serviceObject != null  and serviceObject != ''">and a.service_object = #{serviceObject}</if>
+            <if test="serviceLocation != null  and serviceLocation != ''">and a.service_location = #{serviceLocation}</if>
+            <if test="activityStatus != null">and a.activity_status = #{activityStatus}</if>
+        </where>
+    </select>
+    <select id="selectActivityProcessList" parameterType="ActivityInfo" resultMap="ActivityInfoResult">
+        <include refid="selectActivityInfoVo"/>
+        <where>
+            a.publish_status in ('2','3','4')
+            <if test="activityName != null  and activityName != ''">and a.activity_name like concat('%', #{activityName},
+                '%')
+            </if>
+            <if test="address != null  and address != ''">and a.address like concat('%',#{address}, '%')</if>
+            <if test="serviceField != null  and serviceField != ''">and a.service_field = #{serviceField}</if>
+            <if test="serviceObject != null  and serviceObject != ''">and a.service_object = #{serviceObject}</if>
+            <if test="serviceLocation != null  and serviceLocation != ''">and a.service_location = #{serviceLocation}</if>
+        </where>
+    </select>
+
+    <select id="getPublishActivities" parameterType="ActivityInfo" resultMap="ActivityInfoResult">
+        <include refid="selectActivityInfoVo"/>
+        <where>
+            a.publish_status=4 AND a.start_time >= CURDATE();
+            <if test="activityName != null  and activityName != ''">and a.activity_name like concat('%', #{activityName},
+                '%')
+            </if>
+            <if test="address != null  and address != ''">and a.address like concat('%',#{address}, '%')</if>
+            <if test="serviceField != null  and serviceField != ''">and a.service_field = #{serviceField}</if>
+            <if test="serviceObject != null  and serviceObject != ''">and a.service_object = #{serviceObject}</if>
+            <if test="serviceLocation != null  and serviceLocation != ''">and a.service_location = #{serviceLocation}</if>
+            <if test="userId != null">
+                AND a.activity_id NOT IN (
+                select activity_id from activity_user_record where user_id=#{userId}
+                )
+            </if>
+        </where>
+    </select>
+    <select id="getParticipatedActivities" parameterType="ActivitySearchVo" resultMap="ActivityInfoResult">
+        SELECT a.activity_id       AS activity_id,
+               a.activity_name     AS activity_name,
+               a.address           AS address,
+               a.recruit_number    AS recruit_number,
+               a.dept_id           AS dept_id,
+               a.details           AS details,
+               a.activity_pictures AS activity_pictures,
+               a.service_field     AS service_field,
+               a.service_object    AS service_object,
+               a.service_location  AS service_location,
+               a.activity_status   AS activity_status,
+               a.publish_status    AS publish_status,
+               a.publish_time      AS publish_time,
+               a.start_time        AS start_time,
+               a.end_time          AS end_time,
+               a.duration          AS duration,
+               a.file_id          ,
+               au.signup_time      as signup_date,
+               sd.leader           as leader
+        FROM activity_post_info a
+                 INNER JOIN
+             activity_user_record au on a.activity_id = au.activity_id
+                 INNER JOIN sys_user su on su.user_id = au.user_id
+                 INNER JOIN sys_dept sd on su.dept_id = sd.dept_id
+        WHERE (su.internal_email = #{email} or su.external_email = #{email})
+          and su.user_name = #{username}
+    </select>
+
+    <insert id="insertActivityInfo" parameterType="ActivityInfo" useGeneratedKeys="true" keyProperty="activityId">
+        insert into activity_post_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="activityName != null">activity_name,</if>
+            <if test="address != null">address,</if>
+            <if test="recruitNumber != null">recruit_number,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="details != null">details,</if>
+            <if test="activityPictures != null">activity_pictures,</if>
+            <if test="serviceField != null">service_field,</if>
+            <if test="serviceObject != null">service_object,</if>
+            <if test="serviceLocation != null">service_location,</if>
+            <if test="activityStatus != null">activity_status,</if>
+            <if test="publishStatus != null">publish_status,</if>
+            <if test="publishTime != null">publish_time,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="duration != null">duration,</if>
+            <if test="fileId != null">file_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="activityName != null">#{activityName},</if>
+            <if test="address != null">#{address},</if>
+            <if test="recruitNumber != null">#{recruitNumber},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="details != null">#{details},</if>
+            <if test="activityPictures != null">#{activityPictures},</if>
+            <if test="serviceField != null">#{serviceField},</if>
+            <if test="serviceObject != null">#{serviceObject},</if>
+            <if test="serviceLocation != null">#{serviceLocation},</if>
+            <if test="activityStatus != null">#{activityStatus},</if>
+            <if test="publishStatus != null">#{publishStatus},</if>
+            <if test="publishTime != null">#{publishTime},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="duration != null">#{duration},</if>
+            <if test="fileId != null">#{fileId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateActivityInfo" parameterType="ActivityInfo">
+        update activity_post_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="activityName != null">activity_name = #{activityName},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="recruitNumber != null">recruit_number = #{recruitNumber},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="details != null">details = #{details},</if>
+            <if test="activityPictures != null">activity_pictures = #{activityPictures},</if>
+            <if test="serviceField != null">service_field = #{serviceField},</if>
+            <if test="serviceObject != null">service_object = #{serviceObject},</if>
+            <if test="serviceLocation != null">service_location = #{serviceLocation},</if>
+            <if test="activityStatus != null">activity_status = #{activityStatus},</if>
+            <if test="publishStatus != null">publish_status = #{publishStatus},</if>
+            <if test="publishTime != null">publish_time = #{publishTime},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="duration != null">duration = #{duration},</if>
+            <if test="fileId != null">file_id = #{fileId},</if>
+        </trim>
+        where activity_id = #{activityId}
+    </update>
+    <update id="publishActivityInfo" parameterType="ActivityInfo">
+        update activity_post_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="activityStatus != null">activity_status = #{activityStatus},</if>
+            <if test="publishStatus != null">publish_status = #{publishStatus},</if>
+            <if test="publishTime != null">publish_time = #{publishTime},</if>
+        </trim>
+        where activity_id = #{activityId}
+    </update>
+
+    <delete id="deleteActivityInfoByActivityId" parameterType="Long">
+        delete
+        from activity_post_info
+        where activity_id = #{activityId}
+    </delete>
+
+    <delete id="deleteActivityInfoByActivityIds" parameterType="String">
+        delete from activity_post_info where activity_id in
+        <foreach item="activityId" collection="array" open="(" separator="," close=")">
+            #{activityId}
+        </foreach>
+    </delete>
+
+    <select id="getAuditActivityList"  resultMap="ActivityInfoResult">
+        select * from activity_post_info
+         where
+             1=1
+            <if test="activityStatus == '1'">
+                and activity_status in ('0','4')
+            </if>
+            <if test="activityStatus != '1'">
+                and activity_status = #{activityStatus}
+            </if>
+            <if test="createBy != null and createBy != ''" >
+                and create_by = #{createBy}
+            </if>
+
+    </select>
+</mapper>

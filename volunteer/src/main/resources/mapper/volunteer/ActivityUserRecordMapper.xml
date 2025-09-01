@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.volunteer.mapper.ActivityUserRecordMapper">
+
+    <resultMap type="ActivityUserRecord" id="ActivityUserRecordResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="activityId"    column="activity_id"    />
+        <result property="signupTime"    column="signup_time"    />
+        <result property="participationStatus"    column="participation_status"    />
+        <result property="participationDate"    column="participation_date"    />
+        <result property="reviewOrganizer"    column="review_organizer"    />
+        <result property="reviewOrganizerStatus"    column="review_organizer_status"    />
+        <result property="reviewOrganizerTime"    column="review_organizer_time"    />
+        <result property="reviewAdmin"    column="review_admin"    />
+        <result property="reviewAdminStatus"    column="review_admin_status"    />
+        <result property="reviewAdminTime"    column="review_admin_time"    />
+    </resultMap>
+
+    <sql id="selectActivityUserRecordVo">
+        select id, user_id, user_name, activity_id, signup_time, participation_status, participation_date, review_organizer, review_organizer_status, review_organizer_time, review_admin, review_admin_status, review_admin_time from activity_user_record
+    </sql>
+
+    <select id="selectActivityUserRecordList" parameterType="ActivityUserRecord" resultMap="ActivityUserRecordResult">
+        <include refid="selectActivityUserRecordVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="activityId != null "> and activity_id = #{activityId}</if>
+            <if test="signupTime != null "> and signup_time = #{signupTime}</if>
+            <if test="participationStatus != null "> and participation_status = #{participationStatus}</if>
+            <if test="participationDate != null "> and participation_date = #{participationDate}</if>
+            <if test="reviewOrganizer != null  and reviewOrganizer != ''"> and review_organizer = #{reviewOrganizer}</if>
+            <if test="reviewOrganizerStatus != null "> and review_organizer_status = #{reviewOrganizerStatus}</if>
+            <if test="reviewOrganizerTime != null "> and review_organizer_time = #{reviewOrganizerTime}</if>
+            <if test="reviewAdmin != null  and reviewAdmin != ''"> and review_admin = #{reviewAdmin}</if>
+            <if test="reviewAdminStatus != null "> and review_admin_status = #{reviewAdminStatus}</if>
+            <if test="reviewAdminTime != null "> and review_admin_time = #{reviewAdminTime}</if>
+        </where>
+    </select>
+
+    <select id="selectActivityUserRecordById" parameterType="Long" resultMap="ActivityUserRecordResult">
+        <include refid="selectActivityUserRecordVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertActivityUserRecord" parameterType="ActivityUserRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into activity_user_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="activityId != null">activity_id,</if>
+            <if test="signupTime != null">signup_time,</if>
+            <if test="participationStatus != null">participation_status,</if>
+            <if test="participationDate != null">participation_date,</if>
+            <if test="reviewOrganizer != null">review_organizer,</if>
+            <if test="reviewOrganizerStatus != null">review_organizer_status,</if>
+            <if test="reviewOrganizerTime != null">review_organizer_time,</if>
+            <if test="reviewAdmin != null">review_admin,</if>
+            <if test="reviewAdminStatus != null">review_admin_status,</if>
+            <if test="reviewAdminTime != null">review_admin_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="activityId != null">#{activityId},</if>
+            <if test="signupTime != null">#{signupTime},</if>
+            <if test="participationStatus != null">#{participationStatus},</if>
+            <if test="participationDate != null">#{participationDate},</if>
+            <if test="reviewOrganizer != null">#{reviewOrganizer},</if>
+            <if test="reviewOrganizerStatus != null">#{reviewOrganizerStatus},</if>
+            <if test="reviewOrganizerTime != null">#{reviewOrganizerTime},</if>
+            <if test="reviewAdmin != null">#{reviewAdmin},</if>
+            <if test="reviewAdminStatus != null">#{reviewAdminStatus},</if>
+            <if test="reviewAdminTime != null">#{reviewAdminTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateActivityUserRecord" parameterType="ActivityUserRecord">
+        update activity_user_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="activityId != null">activity_id = #{activityId},</if>
+            <if test="signupTime != null">signup_time = #{signupTime},</if>
+            <if test="participationStatus != null">participation_status = #{participationStatus},</if>
+            <if test="participationDate != null">participation_date = #{participationDate},</if>
+            <if test="reviewOrganizer != null">review_organizer = #{reviewOrganizer},</if>
+            <if test="reviewOrganizerStatus != null">review_organizer_status = #{reviewOrganizerStatus},</if>
+            <if test="reviewOrganizerTime != null">review_organizer_time = #{reviewOrganizerTime},</if>
+            <if test="reviewAdmin != null">review_admin = #{reviewAdmin},</if>
+            <if test="reviewAdminStatus != null">review_admin_status = #{reviewAdminStatus},</if>
+            <if test="reviewAdminTime != null">review_admin_time = #{reviewAdminTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteActivityUserRecordById" parameterType="Long">
+        delete from activity_user_record where id = #{id}
+    </delete>
+
+    <delete id="deleteActivityUserRecordByIds" parameterType="String">
+        delete from activity_user_record where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="zzzPendingReviewList" resultType="java.util.Map">
+        SELECT
+            b.id,
+            b.user_id userId,
+            b.activity_id activityId,
+            b.user_name userName,
+            a.activity_name activityName,
+            a.address ,
+            a.activity_pictures activityPictures,
+            a.start_time  startTime
+        FROM
+            `activity_post_info` a
+                join activity_user_record b on a.activity_id = b.activity_id
+        where
+            b.participation_status = '1'
+          and a.create_by = #{zzzUserId}
+    </select>
+
+
+    <select id="selectUserInActivityRecord" resultType="java.lang.Integer">
+        SELECT count(*) FROM `activity_user_record` where user_id = #{userId} and activity_id = #{activityId}
+    </select>
+
+</mapper>

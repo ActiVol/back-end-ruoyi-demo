@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.volunteer.mapper.FrontMapper">
+
+
+
+    <select id="getUserActivityDuration" resultType="java.lang.Long">
+        SELECT
+            IFNULL(sum(duration) ,0) timeLength
+        FROM
+            `activity_user_record` a
+                join activity_post_info b on a.activity_id = b.activity_id
+        where
+            a.participation_status= '2'
+          and a.user_id = #{userId}
+    </select>
+
+    <select id="getUserActivityDurationSelf" resultType="java.lang.Long">
+        select IFNULL(sum(duration) ,0) timeLength from activity_post_info_self where approve_status ='3' and create_by = #{userId}
+    </select>
+
+    <select id="getUserParticipatedActivityCount" resultType="java.lang.Long">
+        SELECT
+            Count(distinct a.activity_id) num
+        FROM
+            `activity_user_record` a
+                join activity_post_info b on a.activity_id = b.activity_id
+        where
+            a.participation_status= '2'
+          and a.user_id = #{userId}
+    </select>
+
+<!--    <select id="getUserActivityList" resultType="com.ruoyi.volunteer.domain.ActivityInfo">-->
+<!--        select-->
+<!--            *-->
+<!--        from-->
+<!--            activity_post_info-->
+<!--        where activity_id in (select activity_id from activity_user_record where participation_status= '2' and user_id = #{userId})-->
+<!--    </select>-->
+
+    <select id="getUserActivityList" resultType="java.util.Map">
+        select
+            activity_id  activityId,
+            activity_name activityName,
+            duration,
+            recruit_number recruitNumber,
+            address,
+            service_field serviceField,
+            service_object serviceObject,
+            service_location serviceLocation,
+            organizer_name organizerName,
+            organizer_email organizerEmail,
+            details,
+            activity_pictures activityPictures,
+            start_time startTime,
+            end_time endTime,
+            create_time createTime,
+            create_by createBy,
+            '0' activityType
+        from
+            activity_post_info
+        where activity_id in (select activity_id from activity_user_record where participation_status= '2' and user_id = #{userId} )
+        union all
+        select
+            activity_id ,
+            activity_name,
+            duration,
+            recruit_number,
+            address,
+            service_field,
+            service_object,
+            service_location,
+            organizer_name,
+            organizer_email,
+            details,
+            activity_pictures,
+            start_time,
+            end_time,
+            create_time,
+            create_by,
+            '1' activity_type
+        from
+            activity_post_info_self
+        where
+            approve_status ='3'
+            and create_by = #{userId}
+    </select>
+
+
+    <select id="publishActivities" resultType="com.ruoyi.volunteer.domain.ActivityInfo">
+        select * from activity_post_info where activity_status = '3' and publish_status in('3','4') order by publish_time desc
+    </select>
+</mapper>
